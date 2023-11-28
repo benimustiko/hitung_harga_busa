@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator Volume</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="row">
+      <div class="col d-flex align-items-center justify-content-center vh-100">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-4 text-center">Kalkulator Busa</h5>
+            <form id="kalkulatorForm">
+              <div class="input-group input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm"
+                  >Panjang (cm)</span
+                >
+                <input
+                  onkeypress="return event.charCode != 45"
+                  type="number"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  id="panjang"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="input-group input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm"
+                  >Lebar (cm)</span
+                >
+                <input
+                  onkeypress="return event.charCode != 45"
+                  type="number"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  id="lebar"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="input-group input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm"
+                  >Tinggi (cm)</span
+                >
+                <input
+                  onkeypress="return event.charCode != 45"
+                  type="number"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  id="tinggi"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Density</label
+                >
+                <select class="form-select" id="density" required>
+                  <option value="8-10">8-10</option>
+                  <option value="10-12">10-12</option>
+                  <option value="14-16">14-16</option>
+                  <option value="20-22">20-22</option>
+                </select>
+              </div>
+              <div class="input-group input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm"
+                  >Jumlah (cm)</span
+                >
+                <input
+                  onkeypress="return event.charCode != 45"
+                  type="number"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                  id="jumlah"
+                  min="0"
+                  required
+                />
+              </div>
+            </form>
+            <div id="hasil" class="text-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="/busa.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Memuat data formulir dari localStorage saat halaman dimuat
+        var form = document.getElementById("kalkulatorForm");
+        var inputs = form.querySelectorAll("input, select");
+
+        inputs.forEach(function (input) {
+          var storedValue = localStorage.getItem(input.id);
+          if (storedValue !== null) {
+            input.value = storedValue;
+          }
+        });
+
+        // Menambahkan event listener untuk form saat data berubah
+        form.addEventListener("input", function () {
+          // Menyimpan data formulir ke localStorage saat data berubah
+          inputs.forEach(function (input) {
+            localStorage.setItem(input.id, input.value);
+          });
+
+          hitungVolume();
+        });
+      });
+
+      function hitungVolume() {
+        var panjang = document.getElementById("panjang").value.trim();
+        var lebar = document.getElementById("lebar").value.trim();
+        var tinggi = document.getElementById("tinggi").value.trim();
+        var density = document.getElementById("density").value.trim();
+        var jumlah = document.getElementById("jumlah").value.trim();
+        var hasil = document.getElementById("hasil");
+
+        if (density == "8-10" || jumlah == "") density = 580000;
+        if (density == "10-12") density = 650000;
+        if (density == "14-16") density = 950000;
+        if (density == "20-22") density = 1450000;
+
+        if (jumlah >= 0 && jumlah <= 4) density += density * (60 / 100);
+        if (jumlah >= 5 && jumlah <= 9) density += density * (50 / 100);
+        if (jumlah >= 10 && jumlah <= 19) density += density * (35 / 100);
+        if (jumlah >= 20 && jumlah <= 49) density += density * (25 / 100);
+        if (jumlah >= 50 && jumlah <= 99) density += density * (20 / 100);
+        if (jumlah >= 100) density += density * (15 / 100);
+        var hargsBusa =
+          (panjang / 100) * (lebar / 100) * (tinggi / 100) * density * jumlah;
+        var hargsBusa_rupiah = hargsBusa.toLocaleString("id-ID", {
+          style: "currency",
+          currency: "IDR",
+        });
+
+        hasil.innerHTML = "Harga busa " + hargsBusa_rupiah;
+      }
+    </script>
+  </body>
+</html>
